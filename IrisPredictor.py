@@ -39,3 +39,12 @@ print("fit done")
 # evaluate accuracy
 accuracy_score = classifier.evaluate(input_fn=input_fn(test_set), steps=100)["accuracy"]
 print("\nAccuracy: {0:f}".format(accuracy_score))
+
+# export model
+feature_spec = {'flower_features': tf.FixedLenFeature(shape=[4], dtype=np.float32)}
+
+serving_fn = tf.estimator.export.build_parsing_serving_input_receiver_fn(feature_spec)
+
+classifier.export_savedmodel(export_dir_base='/tmp/iris_model' + '/export',
+                            serving_input_receiver_fn=serving_fn)
+print("\nExport done")
